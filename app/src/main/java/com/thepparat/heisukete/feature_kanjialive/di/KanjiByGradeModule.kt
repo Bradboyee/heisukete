@@ -7,6 +7,7 @@ import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.inject.Singleton
@@ -17,7 +18,11 @@ object KanjiByGradeModule {
     @Provides
     @Singleton
     fun provideKanjiAliveApi(): KanjiAliveApi {
+        val interceptor = HttpLoggingInterceptor().apply {
+            this.level = HttpLoggingInterceptor.Level.BODY
+        }
         val client = OkHttpClient.Builder()
+            .addInterceptor(interceptor)
             .addInterceptor { chain ->
                 val request = chain.request().newBuilder()
                     .addHeader("X-RapidAPI-Key", BuildConfig.API_KEY)
