@@ -80,6 +80,7 @@ dependencies {
     implementation "androidx.ui:ui-framework:0.1.0-dev03"
     //logging interceptor
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3")
-
+    //images coil
+    implementation("io.coil-kt:coil-compose:2.2.2")
 
 }
