@@ -19,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
@@ -28,24 +29,28 @@ import kotlinx.coroutines.launch
 @Composable
 fun GridKanjiScreen(
     grade: Int?,
+    bottomPadding : Dp,
     viewModel: GetKanjiByGradeViewModel = hiltViewModel(),
     onSelect: (String) -> Unit,
 ) {
     val refreshScope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
-    var itemCount by remember { mutableStateOf(15) }
     fun refresh() = refreshScope.launch {
         refreshing = true
         delay(1500)
-        itemCount += 5
         refreshing = false
     }
-    val refreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh =  ::refresh)
+
+    val refreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = ::refresh)
     val state = viewModel.state.value
     LaunchedEffect(key1 = true, block = {
         grade?.let { viewModel.loadKanjiByGrade(grade = it) }
     })
-    Box(modifier = Modifier.fillMaxSize().pullRefresh(refreshState), contentAlignment = Alignment.Center) {
+    Box(modifier = Modifier
+        .fillMaxSize()
+        .padding(bottom = bottomPadding)
+        .pullRefresh(refreshState),
+        contentAlignment = Alignment.Center) {
         if (state.loading) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center),
                 color = MaterialTheme.colors.primary)

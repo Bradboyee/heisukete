@@ -1,10 +1,16 @@
 package com.thepparat.heisukete.feature_kanjialive.di
 
+import android.content.Context
+import androidx.room.Room
 import com.thepparat.heisukete.BuildConfig
+import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiDatabase
+import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiDetailDao
+import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiGradeDao
 import com.thepparat.heisukete.feature_kanjialive.data.remote.KanjiAliveApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
+import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -33,5 +39,23 @@ object KanjiByGradeModule {
         return Retrofit.Builder().baseUrl(BuildConfig.BASE_URL)
             .addConverterFactory(GsonConverterFactory.create()).client(client).build()
             .create(KanjiAliveApi::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideKanjiAliveDatabase(@ApplicationContext context: Context): KanjiDatabase {
+        return Room.databaseBuilder(context, KanjiDatabase::class.java, "kanji_database").build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideKanjiByGradeDao(db: KanjiDatabase): KanjiGradeDao {
+        return db.kanjiGradeDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideKanjiDetailDao(db: KanjiDatabase): KanjiDetailDao {
+        return db.kanjiDetailDao()
     }
 }

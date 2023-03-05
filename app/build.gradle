@@ -9,6 +9,10 @@ android {
     namespace 'com.thepparat.heisukete'
     compileSdk 33
 
+    sourceSets {
+        // Adds exported schema location as test app assets.
+        androidTest.assets.srcDirs += files("$projectDir/schemas".toString())
+    }
     defaultConfig {
         applicationId "com.thepparat.heisukete"
         minSdk 26
@@ -20,8 +24,8 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
-        buildConfigField("String","BASE_URL",BASE_URL)
-        buildConfigField("String","API_KEY",API_KEY)
+        buildConfigField("String", "BASE_URL", BASE_URL)
+        buildConfigField("String", "API_KEY", API_KEY)
     }
 
     buildTypes {
@@ -82,5 +86,9 @@ dependencies {
     implementation("com.squareup.okhttp3:logging-interceptor:5.0.0-alpha.3")
     //images coil
     implementation("io.coil-kt:coil-compose:2.2.2")
+    //room database
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
 
 }
