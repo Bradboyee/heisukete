@@ -7,6 +7,9 @@ import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiDetail
 import com.thepparat.heisukete.feature_kanjialive.domain.usecase.GetKanjiDetailUseCase
 import com.thepparat.heisukete.feature_kanjialive.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -18,19 +21,28 @@ class KanjiDetailViewModel @Inject constructor(private val getKanjiDetailUseCase
         private set
 
     fun getKanjiDetail(kanji: String) {
-        viewModelScope.launch {
-            when (val result = getKanjiDetailUseCase.invoke(kanji)) {
-                is Resource.Error -> state.value = state.value.copy(
-                    detail = null,
-                    loading = false,
-                    error = result.message
-                )
-                is Resource.Success -> state.value = state.value.copy(
-                    detail = result.data,
-                    loading = false,
-                    error = null
-                )
-            }
+        viewModelScope.launch(Dispatchers.IO) {
+            getKanjiDetailUseCase.invoke(kanji).onEach { result ->
+                when (result) {
+                    is Resource.Loading -> {
+                        state.value = state.value.copy(
+                            loading = true
+                        )
+                    }
+                    is Resource.Error -> {
+                        state.value = state.value.copy(
+                            error = result.message,
+                            loading = false
+                        )
+                    }
+                    is Resource.Success -> {
+                        state.value = state.value.copy(
+                            detail = result.data,
+                            loading = false
+                        )
+                    }
+                }
+            }.launchIn(this)
         }
     }
 }

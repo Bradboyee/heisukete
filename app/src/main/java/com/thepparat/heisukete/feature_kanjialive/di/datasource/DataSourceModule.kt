@@ -1,9 +1,11 @@
 package com.thepparat.heisukete.feature_kanjialive.di.datasource
 
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.KanjiGradeLocalDataSourceImpl
-import com.thepparat.heisukete.feature_kanjialive.data.datasource.KanjiGradeRemoteDataSourceImpl
+import com.thepparat.heisukete.feature_kanjialive.data.datasource.KanjiRemoteDataSourceImpl
+import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiDetailLocalDataSource
+import com.thepparat.heisukete.feature_kanjialive.data.datasource.KanjiDetailLocalDataSourceImpl
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiGradeLocalDataSource
-import com.thepparat.heisukete.feature_kanjialive.data.datasource.remote.KanjiGradeRemoteDataSource
+import com.thepparat.heisukete.feature_kanjialive.data.datasource.remote.KanjiRemoteDataSource
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -15,9 +17,13 @@ import javax.inject.Singleton
 abstract class DataSourceModule {
     @Binds
     @Singleton
-    abstract fun bindsRemoteDataSource(kanjiGradeRemoteDataSourceImpl: KanjiGradeRemoteDataSourceImpl): KanjiGradeRemoteDataSource
+    abstract fun bindsRemoteDataSource(kanjiRemoteDataSourceImpl: KanjiRemoteDataSourceImpl): KanjiRemoteDataSource
 
     @Binds
     @Singleton
-    abstract fun bindsLocalDataSource(kanjiGradeLocalDataSourceImpl: KanjiGradeLocalDataSourceImpl): KanjiGradeLocalDataSource
+    abstract fun bindsKanjiGradeLocalDataSource(kanjiGradeLocalDataSourceImpl: KanjiGradeLocalDataSourceImpl): KanjiGradeLocalDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindsKanjiDetailLocalDataSource(kanjiDetailLocalDataSourceImpl: KanjiDetailLocalDataSourceImpl): KanjiDetailLocalDataSource
 }

@@ -47,7 +47,7 @@ class MainActivity : ComponentActivity() {
                                 })
                     }
                 }) {
-                    Navigate(navController = navController,it.calculateBottomPadding())
+                    Navigate(navController = navController,it)
                 }
             }
         }

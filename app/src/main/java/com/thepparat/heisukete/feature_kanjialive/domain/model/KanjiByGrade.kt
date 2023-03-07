@@ -10,4 +10,7 @@ data class KanjiByGrade(
     val id: UUID,
     val kanji: String,
     val grade: Int,
+    val meaning: String,
+    val katakana: String,
+    val hiragana: String,
 )

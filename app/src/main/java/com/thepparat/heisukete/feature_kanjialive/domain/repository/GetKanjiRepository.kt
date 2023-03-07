@@ -7,5 +7,6 @@ import kotlinx.coroutines.flow.Flow
 
 interface GetKanjiRepository {
     suspend fun getKanjiByGrade(grade: Int): Flow<Resource<List<KanjiByGrade>>>
-    suspend fun getKanjiDetailed(kanji : String) : Resource<KanjiDetail>
+    suspend fun getKanjiDetailed(kanji: String): Flow<Resource<KanjiDetail>>
+    suspend fun onSearchKanji(grade: Int, query: String): Flow<Resource<List<KanjiByGrade>>>
 }

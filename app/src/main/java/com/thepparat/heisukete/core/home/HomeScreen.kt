@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun HomeScreen(clickHandler: (Int) -> Unit) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-        LazyColumn() {
+        LazyColumn {
             items(5) {
                 val grade = it + 1
                 Text(text = "Grade $grade", modifier = Modifier.clickable {

@@ -1,7 +1,8 @@
 package com.thepparat.heisukete.feature_kanjialive.data.repository
 
+import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiDetailLocalDataSource
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiGradeLocalDataSource
-import com.thepparat.heisukete.feature_kanjialive.data.datasource.remote.KanjiGradeRemoteDataSource
+import com.thepparat.heisukete.feature_kanjialive.data.datasource.remote.KanjiRemoteDataSource
 import com.thepparat.heisukete.feature_kanjialive.data.mappers.toKanjiByGrade
 import com.thepparat.heisukete.feature_kanjialive.data.mappers.toKanjiDetail
 import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiByGrade
@@ -16,8 +17,9 @@ import javax.inject.Inject
 const val ERROR = "An error occurred."
 
 class GetKanjiRepositoryImpl @Inject constructor(
-    private val local: KanjiGradeLocalDataSource,
-    private val remote: KanjiGradeRemoteDataSource,
+    private val gradeLocal: KanjiGradeLocalDataSource,
+    private val detailLocal: KanjiDetailLocalDataSource,
+    private val remote: KanjiRemoteDataSource,
 ) :
     GetKanjiRepository {
     override suspend fun getKanjiByGrade(grade: Int):
@@ -25,16 +27,17 @@ class GetKanjiRepositoryImpl @Inject constructor(
         try {
             //check local
             emit(Resource.Loading())
-            val cached = local.getKanjiByGrade(grade = grade)
+            val cached = gradeLocal.getKanjiByGrade(grade = grade)
             if (cached.isNotEmpty()) {
                 emit(Resource.Success(data = cached))
+                return@flow
             }
             //fetch remote
             val kanjiByGrades =
                 remote.getKanjiGradeFromApi(grade = grade).map { it.toKanjiByGrade() }
             //cache
-            local.clearKanjiByGrade()
-            local.saveKanjiByGrade(kanjiByGrades)
+            gradeLocal.clearKanjiByGrade()
+            gradeLocal.saveKanjiByGrade(kanjiByGrades)
             emit(Resource.Success(data = kanjiByGrades))
         } catch (e: Exception) {
             emit(Resource.Error(message = e.message ?: ERROR))
@@ -47,13 +50,40 @@ class GetKanjiRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getKanjiDetailed(kanji: String): Resource<KanjiDetail> {
-        return try {
+    override suspend fun getKanjiDetailed(kanji: String): Flow<Resource<KanjiDetail>> = flow {
+        try {
+            //check local
+            emit(Resource.Loading())
+            val detail = detailLocal.getDetailByKanji(kanji = kanji)
+            if (detail != null) {
+                emit(Resource.Success(data = detail))
+                return@flow
+            }
+
+            val kanjiDetailFromApi = remote.getKanjiDetailFromApi(kanji).toKanjiDetail()
+            detailLocal.delete(kanji = kanji)
+            detailLocal.saveDetail(kanjiDetailFromApi)
+            emit(Resource.Success(data = kanjiDetailFromApi))
+
+
             val kanjiDetail = remote.getKanjiDetailFromApi(kanji = kanji).toKanjiDetail()
-            Resource.Success(kanjiDetail)
+            emit(Resource.Success(kanjiDetail))
         } catch (e: Exception) {
-            return Resource.Error(message = e.message ?: ERROR)
+            emit(Resource.Error(message = e.message ?: ERROR))
+        } catch (e: HttpException) {
+            emit(
+                Resource.Error(
+                    message = "Oops, something went wrong!",
+                )
+            )
         }
+    }
+
+    override suspend fun onSearchKanji(
+        grade: Int,
+        query: String,
+    ): Flow<Resource<List<KanjiByGrade>>> {
+        TODO("Not yet implemented")
     }
 
 }

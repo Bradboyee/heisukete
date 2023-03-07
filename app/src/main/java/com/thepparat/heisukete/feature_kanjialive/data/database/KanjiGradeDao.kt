@@ -16,4 +16,7 @@ interface KanjiGradeDao {
 
     @Query("SELECT * FROM kanji_grade kanji WHERE kanji.grade = :grade ")
     fun getKanjiByGrade(grade: Int): List<KanjiByGrade>
+
+    @Query("SELECT * FROM kanji_grade kanji WHERE kanji.grade = :grade AND  kanji.meaning LIKE '%' || :query || '%'")
+    fun onSearchKanji(grade: Int, query: String): List<KanjiByGrade>
 }

@@ -1,16 +1,12 @@
 package com.thepparat.heisukete.feature_kanjialive.presentation
 
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Text
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -19,7 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import kotlinx.coroutines.delay
@@ -29,7 +25,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun GridKanjiScreen(
     grade: Int?,
-    bottomPadding : Dp,
+    paddingValues: PaddingValues,
     viewModel: GetKanjiByGradeViewModel = hiltViewModel(),
     onSelect: (String) -> Unit,
 ) {
@@ -48,31 +44,59 @@ fun GridKanjiScreen(
     })
     Box(modifier = Modifier
         .fillMaxSize()
-        .padding(bottom = bottomPadding)
+        .padding(paddingValues)
         .pullRefresh(refreshState),
         contentAlignment = Alignment.Center) {
         if (state.loading) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center),
-                color = MaterialTheme.colors.primary)
+            CircularProgressIndicator(
+                color = MaterialTheme.colors.primary,
+                modifier = Modifier.align(alignment = Alignment.Center))
 
         }
         if (!state.error.isNullOrEmpty()) {
             Text(text = state.error, color = Color.Red, textAlign = TextAlign.Center)
         }
-        LazyVerticalGrid(
-            modifier = Modifier.padding(8.dp),
-            columns = GridCells.Adaptive(minSize = 64.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            state.kanji?.let {
-                items(it) { kanji ->
-                    KanjiCardItem(character = kanji.kanji) { character ->
-                        onSelect(character)
+        Column(modifier = Modifier.fillMaxSize()) {
+            TextField(
+                modifier = Modifier
+                    .fillMaxWidth().padding(16.dp),
+                value = viewModel.searchQuery.value,
+                onValueChange = viewModel::onSearch,
+                placeholder = {
+                    Row(modifier = Modifier.fillMaxWidth()) {
+                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
+                        Text(text = "Search",
+                            modifier = Modifier.align(alignment = Alignment.Bottom).padding(start = 16.dp))
                     }
+                })
+            LazyVerticalGrid(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp),
+                columns = GridCells.Adaptive(minSize = 64.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                state.kanji?.let {
+                    items(it) { kanji ->
+                        KanjiCardItem(character = kanji.kanji) { character ->
+                            onSelect(character)
+                        }
+                    }
+                }
+                item {
+                    Spacer(modifier = Modifier.height(16.dp))
                 }
             }
         }
+
         PullRefreshIndicator(refreshing, refreshState, Modifier.align(Alignment.TopCenter))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun previewGridScreen() {
+    Box(modifier = Modifier.fillMaxSize()) {
+
     }
 }

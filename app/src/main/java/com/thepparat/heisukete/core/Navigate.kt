@@ -1,7 +1,7 @@
 package com.thepparat.heisukete.core
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.unit.Dp
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -15,7 +15,7 @@ import com.thepparat.heisukete.feature_kanjialive.presentation.GridKanjiScreen
 import com.thepparat.heisukete.feature_kanjialive.presentation.KanjiDetailScreen
 
 @Composable
-fun Navigate(navController: NavHostController, calculateBottomPadding: Dp) {
+fun Navigate(navController: NavHostController, paddingValues: PaddingValues) {
     NavHost(navController = navController, startDestination = HeisukeScreen.HomeScreen.route) {
         //space route
         composable(route = HeisukeScreen.SpacedScreen.route) {
@@ -36,7 +36,7 @@ fun Navigate(navController: NavHostController, calculateBottomPadding: Dp) {
                 type = NavType.IntType
             })) { backStackEntry ->
             GridKanjiScreen(backStackEntry.arguments?.getInt("grade"),
-                bottomPadding = calculateBottomPadding) { character ->
+                paddingValues = paddingValues) { character ->
                 navController.navigate(HeisukeScreen.KanjiDetail.route + "/$character")
             }
         }
@@ -45,7 +45,7 @@ fun Navigate(navController: NavHostController, calculateBottomPadding: Dp) {
                 type = NavType.StringType
             })) { backStackEntry ->
             KanjiDetailScreen(backStackEntry.arguments?.getString("character"),
-                bottomPadding = calculateBottomPadding)
+                paddingValues = paddingValues)
         }
     }
 }

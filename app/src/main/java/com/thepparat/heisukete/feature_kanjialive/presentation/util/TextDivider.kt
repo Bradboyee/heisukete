@@ -12,11 +12,10 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 @Composable
-fun TextDivider(text: String, space: Dp = 8.dp) {
+fun TextDivider(text: String, space: Dp = 8.dp, modifier: Modifier = Modifier.fillMaxWidth()) {
     Spacer(modifier = Modifier.height(space))
     Box(
-        Modifier
-            .fillMaxWidth()
+        modifier
             .background(color = MaterialTheme.colors.primary)
     ) {
         Text(
