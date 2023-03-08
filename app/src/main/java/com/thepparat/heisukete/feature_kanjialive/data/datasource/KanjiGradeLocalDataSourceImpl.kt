@@ -3,7 +3,6 @@ package com.thepparat.heisukete.feature_kanjialive.data.datasource
 import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiGradeDao
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiGradeLocalDataSource
 import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiByGrade
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class KanjiGradeLocalDataSourceImpl @Inject constructor(private val dao: KanjiGradeDao) :
@@ -18,5 +17,9 @@ class KanjiGradeLocalDataSourceImpl @Inject constructor(private val dao: KanjiGr
 
     override fun clearKanjiByGrade() {
         return dao.clearKanjiGrade()
+    }
+
+    override fun onSearchGradeKanji(grade: Int, query: String): List<KanjiByGrade> {
+        return dao.onSearchKanji(grade = grade, query = query)
     }
 }

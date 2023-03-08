@@ -1,5 +1,6 @@
 package com.thepparat.heisukete.feature_kanjialive.data.repository
 
+import android.util.Log
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiDetailLocalDataSource
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiGradeLocalDataSource
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.remote.KanjiRemoteDataSource
@@ -82,8 +83,15 @@ class GetKanjiRepositoryImpl @Inject constructor(
     override suspend fun onSearchKanji(
         grade: Int,
         query: String,
-    ): Flow<Resource<List<KanjiByGrade>>> {
-        TODO("Not yet implemented")
+    ): Flow<Resource<List<KanjiByGrade>>> = flow {
+        Log.d("onSearchKanji","trigger")
+        emit(Resource.Loading())
+        val onSearchGradeKanji = gradeLocal.onSearchGradeKanji(grade = grade, query = query)
+        if (onSearchGradeKanji.isEmpty()) {
+            emit(Resource.Error(message = "Not found any kanji"))
+            return@flow
+        }
+        emit(Resource.Success(data = onSearchGradeKanji))
     }
 
 }

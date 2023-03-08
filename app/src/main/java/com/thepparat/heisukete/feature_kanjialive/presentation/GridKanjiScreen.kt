@@ -1,5 +1,6 @@
 package com.thepparat.heisukete.feature_kanjialive.presentation
 
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
@@ -29,6 +30,7 @@ fun GridKanjiScreen(
     viewModel: GetKanjiByGradeViewModel = hiltViewModel(),
     onSelect: (String) -> Unit,
 ) {
+    Log.d("DETAIL SCREEN", "SELECT GRADE $grade")
     val refreshScope = rememberCoroutineScope()
     var refreshing by remember { mutableStateOf(false) }
     fun refresh() = refreshScope.launch {
@@ -40,6 +42,9 @@ fun GridKanjiScreen(
     val refreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = ::refresh)
     val state = viewModel.state.value
     LaunchedEffect(key1 = true, block = {
+        grade?.let {
+            viewModel.grade.value = it
+        }
         grade?.let { viewModel.loadKanjiByGrade(grade = it) }
     })
     Box(modifier = Modifier
@@ -59,14 +64,17 @@ fun GridKanjiScreen(
         Column(modifier = Modifier.fillMaxSize()) {
             TextField(
                 modifier = Modifier
-                    .fillMaxWidth().padding(16.dp),
+                    .fillMaxWidth()
+                    .padding(16.dp),
                 value = viewModel.searchQuery.value,
                 onValueChange = viewModel::onSearch,
                 placeholder = {
                     Row(modifier = Modifier.fillMaxWidth()) {
                         Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
                         Text(text = "Search",
-                            modifier = Modifier.align(alignment = Alignment.Bottom).padding(start = 16.dp))
+                            modifier = Modifier
+                                .align(alignment = Alignment.Bottom)
+                                .padding(start = 16.dp))
                     }
                 })
             LazyVerticalGrid(
