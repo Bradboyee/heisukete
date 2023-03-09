@@ -3,11 +3,14 @@ package com.thepparat.heisukete.feature_kanjialive.data.repository
 import android.util.Log
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiDetailLocalDataSource
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiGradeLocalDataSource
+import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiItemLocalDataSource
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.remote.KanjiRemoteDataSource
 import com.thepparat.heisukete.feature_kanjialive.data.mappers.toKanjiByGrade
 import com.thepparat.heisukete.feature_kanjialive.data.mappers.toKanjiDetail
+import com.thepparat.heisukete.feature_kanjialive.data.mappers.toKanjiItem
 import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiByGrade
 import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiDetail
+import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiItem
 import com.thepparat.heisukete.feature_kanjialive.domain.repository.GetKanjiRepository
 import com.thepparat.heisukete.feature_kanjialive.domain.util.Resource
 import kotlinx.coroutines.flow.Flow
@@ -16,10 +19,12 @@ import retrofit2.HttpException
 import javax.inject.Inject
 
 const val ERROR = "An error occurred."
+const val HTTP_ERROR = "Oops, something went wrong!"
 
 class GetKanjiRepositoryImpl @Inject constructor(
     private val gradeLocal: KanjiGradeLocalDataSource,
     private val detailLocal: KanjiDetailLocalDataSource,
+    private val kanjiItemLocal: KanjiItemLocalDataSource,
     private val remote: KanjiRemoteDataSource,
 ) :
     GetKanjiRepository {
@@ -45,7 +50,7 @@ class GetKanjiRepositoryImpl @Inject constructor(
         } catch (e: HttpException) {
             emit(
                 Resource.Error(
-                    message = "Oops, something went wrong!",
+                    message = HTTP_ERROR,
                 )
             )
         }
@@ -65,16 +70,12 @@ class GetKanjiRepositoryImpl @Inject constructor(
             detailLocal.delete(kanji = kanji)
             detailLocal.saveDetail(kanjiDetailFromApi)
             emit(Resource.Success(data = kanjiDetailFromApi))
-
-
-            val kanjiDetail = remote.getKanjiDetailFromApi(kanji = kanji).toKanjiDetail()
-            emit(Resource.Success(kanjiDetail))
         } catch (e: Exception) {
             emit(Resource.Error(message = e.message ?: ERROR))
         } catch (e: HttpException) {
             emit(
                 Resource.Error(
-                    message = "Oops, something went wrong!",
+                    message = HTTP_ERROR
                 )
             )
         }
@@ -84,7 +85,7 @@ class GetKanjiRepositoryImpl @Inject constructor(
         grade: Int,
         query: String,
     ): Flow<Resource<List<KanjiByGrade>>> = flow {
-        Log.d("onSearchKanji","trigger")
+        Log.d("onSearchKanji", "trigger")
         emit(Resource.Loading())
         val onSearchGradeKanji = gradeLocal.onSearchGradeKanji(grade = grade, query = query)
         if (onSearchGradeKanji.isEmpty()) {
@@ -93,5 +94,48 @@ class GetKanjiRepositoryImpl @Inject constructor(
         }
         emit(Resource.Success(data = onSearchGradeKanji))
     }
+
+    override suspend fun getGrade(grade: Int): Flow<Resource<List<KanjiItem>>> = flow {
+        try {
+            emit(Resource.Loading())
+            val findAll = kanjiItemLocal.findAll(grade = grade)
+            if (findAll.isNotEmpty()) {
+                emit(Resource.Success(data = findAll))
+                return@flow
+            }
+            val kanjiByGradeFromRemote =
+                remote.getKanjiByGradeFromRemote(grade).map { it.toKanjiItem(grade = grade) }
+            kanjiItemLocal.clearKanjiItem()
+            kanjiItemLocal.insertKanjiItem(kanjiByGradeFromRemote)
+            emit(Resource.Success(data = kanjiByGradeFromRemote))
+        } catch (e: Exception) {
+            emit(Resource.Error(message = e.message ?: ERROR))
+        }
+    }
+
+    override suspend fun searchKanji(query: String, grade: Int): Flow<Resource<List<KanjiItem>>> =
+        flow {
+            try {
+                emit(Resource.Loading())
+                val searchKanjiFromRemote = remote.searchKanjiFromRemote(query)
+                if (searchKanjiFromRemote.isEmpty()) {
+                    emit(Resource.Error(message = "Not found kanji for $query"))
+                    return@flow
+                }
+                val foundedCharacters = searchKanjiFromRemote.map { it.kanji.character }
+                //check it's the same grade
+                val findKanjiByCharacters =
+                    kanjiItemLocal.findKanjiByCharacters(characters = foundedCharacters,
+                        grade = grade)
+                if (findKanjiByCharacters.isEmpty()) {
+                    emit(Resource.Error("There are no kanji for $query in this grade"))
+                }
+                emit(Resource.Success(data = findKanjiByCharacters))
+            } catch (e: Exception) {
+                emit(Resource.Error(message = e.message ?: ERROR))
+            } catch (e: HttpException) {
+                emit(Resource.Error(message = e.message ?: HTTP_ERROR))
+            }
+        }
 
 }

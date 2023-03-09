@@ -6,8 +6,8 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.thepparat.heisukete.feature_kanjialive.domain.usecase.GetKanjiByGradeUseCase
-import com.thepparat.heisukete.feature_kanjialive.domain.usecase.SearchKanjiUseCase
+import com.thepparat.heisukete.feature_kanjialive.domain.usecase.GetByGradeUseCase
+import com.thepparat.heisukete.feature_kanjialive.domain.usecase.GetBySearchUseCase
 import com.thepparat.heisukete.feature_kanjialive.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -20,8 +20,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class GetKanjiByGradeViewModel @Inject constructor(
-    private val getKanjiByGradeUseCase: GetKanjiByGradeUseCase,
-    private val searchKanjiUseCase: SearchKanjiUseCase,
+    private val getByGradeUseCase: GetByGradeUseCase,
+    private val searchUseCase: GetBySearchUseCase,
 ) : ViewModel() {
 
     var state = mutableStateOf(KanjiByGradeState())
@@ -34,21 +34,23 @@ class GetKanjiByGradeViewModel @Inject constructor(
     private val _grade = mutableStateOf(0)
     val grade: MutableState<Int> = _grade
 
+    val setGrade: (Int) -> Unit = { grade: Int ->
+        _grade.value = grade
+    }
+
     fun onSearch(query: String) {
-        if (query.isEmpty() || query.isBlank()){
-            loadKanjiByGrade(grade.value)
-        }
         _searchQuery.value = query
+        Log.d("SEARCH GRID", "SEARCH WITH QUERY : ${_searchQuery.value} GRADE : ${_grade.value}")
         searchJob?.cancel()
         searchJob = viewModelScope.launch(Dispatchers.IO) {
             delay(500)
-            Log.d("QUERY", query)
-            Log.d("QUERY", _grade.value.toString())
-            searchKanjiUseCase.invoke(grade = _grade.value, query = query).onEach { result ->
+            searchUseCase.invoke(grade = _grade.value, query = query).onEach { result ->
                 when (result) {
                     is Resource.Loading -> {
                         state.value = state.value.copy(
-                            loading = true
+                            loading = true,
+                            kanji = null,
+                            error = null
                         )
                     }
                     is Resource.Error -> {
@@ -63,33 +65,6 @@ class GetKanjiByGradeViewModel @Inject constructor(
                             kanji = result.data,
                             error = null,
                             loading = false
-                        )
-                    }
-                }
-            }.launchIn(this)
-        }
-    }
-
-    fun loadKanjiByGrade(grade: Int) {
-        viewModelScope.launch(Dispatchers.IO) {
-            getKanjiByGradeUseCase.invoke(grade).onEach { result ->
-                when (result) {
-                    is Resource.Error -> {
-                        state.value = state.value.copy(
-                            error = result.message,
-                            loading = false
-                        )
-                    }
-                    is Resource.Success -> {
-                        state.value = state.value.copy(
-                            kanji = result.data,
-                            loading = false,
-                            error = null
-                        )
-                    }
-                    is Resource.Loading -> {
-                        state.value = state.value.copy(
-                            loading = true
                         )
                     }
                 }

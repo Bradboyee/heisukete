@@ -10,7 +10,9 @@ fun KanjiByGradeDto.toKanjiByGrade(): KanjiByGrade {
         kanji = kanji.character,
         grade = references.grade,
         katakana = kanji.onyomi.katakana,
+        katakanaRomaji = kanji.onyomi.romaji,
         hiragana = kanji.kunyomi.hiragana,
+        hiraganaRomaji = kanji.kunyomi.romaji,
         meaning = kanji.meaning.english
     )
 }

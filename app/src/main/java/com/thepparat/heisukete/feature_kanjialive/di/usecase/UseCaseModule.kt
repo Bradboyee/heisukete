@@ -1,9 +1,7 @@
 package com.thepparat.heisukete.feature_kanjialive.di.usecase
 
 import com.thepparat.heisukete.feature_kanjialive.domain.repository.GetKanjiRepository
-import com.thepparat.heisukete.feature_kanjialive.domain.usecase.GetKanjiByGradeUseCase
-import com.thepparat.heisukete.feature_kanjialive.domain.usecase.GetKanjiDetailUseCase
-import com.thepparat.heisukete.feature_kanjialive.domain.usecase.SearchKanjiUseCase
+import com.thepparat.heisukete.feature_kanjialive.domain.usecase.*
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -30,5 +28,17 @@ object UseCaseModule {
     @Singleton
     fun provideOnSearchKanjiUseCase(repository: GetKanjiRepository): SearchKanjiUseCase {
         return SearchKanjiUseCase(repository = repository)
+    }
+
+
+    @Provides
+    fun provideGetBySearchUseCase(repository: GetKanjiRepository): GetBySearchUseCase {
+        return GetBySearchUseCase(repository = repository)
+    }
+
+    @Provides
+    @Singleton
+    fun provideGetByGradeUseCase(repository: GetKanjiRepository): GetByGradeUseCase {
+        return GetByGradeUseCase(repository = repository)
     }
 }

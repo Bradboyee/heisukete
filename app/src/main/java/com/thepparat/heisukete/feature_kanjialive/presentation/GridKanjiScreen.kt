@@ -16,9 +16,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.thepparat.heisukete.feature_kanjialive.presentation.util.SearchKanjiTextField
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -42,10 +42,8 @@ fun GridKanjiScreen(
     val refreshState = rememberPullRefreshState(refreshing = refreshing, onRefresh = ::refresh)
     val state = viewModel.state.value
     LaunchedEffect(key1 = true, block = {
-        grade?.let {
-            viewModel.grade.value = it
-        }
-        grade?.let { viewModel.loadKanjiByGrade(grade = it) }
+        grade?.let { viewModel.setGrade(it) }
+        viewModel.onSearch("")
     })
     Box(modifier = Modifier
         .fillMaxSize()
@@ -62,21 +60,13 @@ fun GridKanjiScreen(
             Text(text = state.error, color = Color.Red, textAlign = TextAlign.Center)
         }
         Column(modifier = Modifier.fillMaxSize()) {
-            TextField(
+            SearchKanjiTextField(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(16.dp),
                 value = viewModel.searchQuery.value,
-                onValueChange = viewModel::onSearch,
-                placeholder = {
-                    Row(modifier = Modifier.fillMaxWidth()) {
-                        Icon(imageVector = Icons.Default.Search, contentDescription = "Search")
-                        Text(text = "Search",
-                            modifier = Modifier
-                                .align(alignment = Alignment.Bottom)
-                                .padding(start = 16.dp))
-                    }
-                })
+                onChange = viewModel::onSearch
+            )
             LazyVerticalGrid(
                 modifier = Modifier
                     .padding(horizontal = 16.dp),
@@ -86,7 +76,7 @@ fun GridKanjiScreen(
             ) {
                 state.kanji?.let {
                     items(it) { kanji ->
-                        KanjiCardItem(character = kanji.kanji) { character ->
+                        KanjiCardItem(character = kanji.character) { character ->
                             onSelect(character)
                         }
                     }
@@ -98,13 +88,5 @@ fun GridKanjiScreen(
         }
 
         PullRefreshIndicator(refreshing, refreshState, Modifier.align(Alignment.TopCenter))
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun previewGridScreen() {
-    Box(modifier = Modifier.fillMaxSize()) {
-
     }
 }

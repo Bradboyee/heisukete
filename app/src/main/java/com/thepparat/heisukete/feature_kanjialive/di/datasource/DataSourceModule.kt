@@ -1,10 +1,12 @@
 package com.thepparat.heisukete.feature_kanjialive.di.datasource
 
+import com.thepparat.heisukete.feature_kanjialive.data.datasource.KanjiDetailLocalDataSourceImpl
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.KanjiGradeLocalDataSourceImpl
+import com.thepparat.heisukete.feature_kanjialive.data.datasource.KanjiItemLocalDataSourceImpl
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.KanjiRemoteDataSourceImpl
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiDetailLocalDataSource
-import com.thepparat.heisukete.feature_kanjialive.data.datasource.KanjiDetailLocalDataSourceImpl
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiGradeLocalDataSource
+import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiItemLocalDataSource
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.remote.KanjiRemoteDataSource
 import dagger.Binds
 import dagger.Module
@@ -26,4 +28,8 @@ abstract class DataSourceModule {
     @Binds
     @Singleton
     abstract fun bindsKanjiDetailLocalDataSource(kanjiDetailLocalDataSourceImpl: KanjiDetailLocalDataSourceImpl): KanjiDetailLocalDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindKanjiItemLocalDataSource(kanjiItemLocalDataSourceImpl: KanjiItemLocalDataSourceImpl): KanjiItemLocalDataSource
 }

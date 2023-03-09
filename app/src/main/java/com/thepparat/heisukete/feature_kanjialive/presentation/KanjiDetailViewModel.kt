@@ -4,6 +4,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiDetail
+import com.thepparat.heisukete.feature_kanjialive.domain.usecase.GetByGradeUseCase
 import com.thepparat.heisukete.feature_kanjialive.domain.usecase.GetKanjiDetailUseCase
 import com.thepparat.heisukete.feature_kanjialive.domain.util.Resource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -14,7 +15,10 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class KanjiDetailViewModel @Inject constructor(private val getKanjiDetailUseCase: GetKanjiDetailUseCase) :
+class KanjiDetailViewModel @Inject constructor(
+    private val getKanjiDetailUseCase: GetKanjiDetailUseCase,
+    private val getByGradeUseCase: GetByGradeUseCase
+    ) :
     ViewModel() {
 
     var state = mutableStateOf(KanjiDetailState(loading = true))

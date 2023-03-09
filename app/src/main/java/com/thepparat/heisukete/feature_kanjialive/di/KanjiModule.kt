@@ -6,6 +6,7 @@ import com.thepparat.heisukete.BuildConfig
 import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiDatabase
 import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiDetailDao
 import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiGradeDao
+import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiItemDao
 import com.thepparat.heisukete.feature_kanjialive.data.remote.KanjiAliveApi
 import dagger.Module
 import dagger.Provides
@@ -57,5 +58,11 @@ object KanjiModule {
     @Singleton
     fun provideKanjiDetailDao(db: KanjiDatabase): KanjiDetailDao {
         return db.kanjiDetailDao()
+    }
+
+    @Provides
+    @Singleton
+    fun provideKanjiItemDao(db: KanjiDatabase): KanjiItemDao {
+        return db.kanjiItemDao()
     }
 }
