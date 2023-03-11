@@ -17,13 +17,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.unit.toSize
 import androidx.hilt.navigation.compose.hiltViewModel
+import coil.compose.AsyncImage
+import coil.decode.SvgDecoder
+import coil.request.ImageRequest
+import com.thepparat.heisukete.R
 import com.thepparat.heisukete.feature_kanjialive.presentation.util.StrokeImage
 import com.thepparat.heisukete.feature_kanjialive.presentation.util.TextDivider
+import com.thepparat.heisukete.feature_kanjialive.presentation.util.TextTopic
 
 @Composable
 fun KanjiDetailScreen(
@@ -103,27 +112,7 @@ fun KanjiDetailScreen(
                         "Strokes:" to " ${kanji.stroke}",
                         "Grade:" to " ${kanji.grade}",
                     ).forEach { (verb, pronoun) ->
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = verb,
-                                color = MaterialTheme.colors.primary,
-                                style = MaterialTheme.typography.body1,
-                                modifier = Modifier
-                                    .weight(0.5f)
-                                    .fillMaxWidth()
-                                    .wrapContentWidth(align = Alignment.End)
-                                    .align(alignment = Alignment.Top)
-                            )
-                            Text(
-                                text = pronoun,
-                                style = MaterialTheme.typography.body1,
-                                modifier = Modifier
-                                    .weight(1f)
-                                    .fillMaxWidth()
-                            )
-                        }
+                        TextTopic(topic = verb, desc = pronoun)
                         if (verb == "Kun readings:") {
                             TextDivider(text = "Info", modifier = Modifier.width(boxWidth.width.dp))
 
@@ -133,6 +122,27 @@ fun KanjiDetailScreen(
                 TextDivider(text = "Compounds")
                 kanji.examples?.forEach { example ->
                     Text(text = example)
+                }
+                TextDivider(text = "Radicals")
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    AsyncImage(
+                        model = ImageRequest.Builder(LocalContext.current)
+                            .data(kanji.radicalImage)
+                            .decoderFactory(SvgDecoder.Factory())
+                            .crossfade(true)
+                            .build(),
+                        contentDescription = kanji.radical,
+                        modifier = Modifier
+                            .align(alignment = Alignment.CenterVertically)
+                            .weight(1f)
+                            .padding(horizontal = 16.dp)
+                    )
+                    Column(modifier = Modifier.width(IntrinsicSize.Max).weight(3f)) {
+                        TextTopic(topic = "stroke: ", desc = kanji.radicalStroke.toString())
+                        TextTopic(topic = "hiragana: ", desc = kanji.radicalHiragana)
+                        TextTopic(topic = "romaji: ", desc = kanji.radicalRomaji)
+                    }
+
                 }
 
             }

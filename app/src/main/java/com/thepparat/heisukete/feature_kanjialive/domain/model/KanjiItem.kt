@@ -9,5 +9,4 @@ data class KanjiItem(
     val character: String,
     val stroke: Int,
     val grade: Int,
-) {
-}
+)

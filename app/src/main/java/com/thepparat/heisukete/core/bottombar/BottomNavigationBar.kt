@@ -63,18 +63,18 @@ val NAVIGATION_ITEMS = listOf(
         name = HeisukeScreen.SpacedScreen.name,
         route = HeisukeScreen.SpacedScreen.route,
         icon = Icons.Default.Refresh,
-        badgeCount = 1
+        badgeCount = 0
     ),
     NavItem(
         name = HeisukeScreen.HomeScreen.name,
         route = HeisukeScreen.HomeScreen.route,
         icon = Icons.Default.Home,
-        badgeCount = 2
+        badgeCount = 0
     ),
     NavItem(
         name = HeisukeScreen.StatScreen.name,
         route = HeisukeScreen.StatScreen.route,
         icon = Icons.Default.Star,
-        badgeCount = 3
+        badgeCount = 0
     ),
 )

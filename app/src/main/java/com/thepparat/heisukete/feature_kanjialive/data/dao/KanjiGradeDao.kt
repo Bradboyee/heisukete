@@ -1,4 +1,4 @@
-package com.thepparat.heisukete.feature_kanjialive.data.database
+package com.thepparat.heisukete.feature_kanjialive.data.dao
 
 import androidx.room.Dao
 import androidx.room.Insert

@@ -21,6 +21,7 @@ import coil.request.ImageRequest
 @Composable
 fun StrokeImage(url: String, description: String, boxSize: Dp) {
     val backgroundColor = MaterialTheme.colors.onBackground.copy(alpha = 0.75f)
+    val drawLineAlpha = 0.9f
     Box(modifier = Modifier.size(size = boxSize)) {
         Canvas(modifier = Modifier
             .fillMaxSize()
@@ -28,14 +29,14 @@ fun StrokeImage(url: String, description: String, boxSize: Dp) {
             val width = size.width
             val height = size.height
             drawLine(
-                alpha = 0.5f,
+                alpha = drawLineAlpha,
                 color = backgroundColor,
                 start = Offset(x = width / 2, y = 0f),
                 end = Offset(x = width / 2, y = height),
                 pathEffect = PathEffect.dashPathEffect(floatArrayOf(10f, 10f), 0f)
             )
             drawLine(
-                alpha = 0.5f,
+                alpha = drawLineAlpha,
                 color = backgroundColor,
                 start = Offset(x = 0f, y = height / 2),
                 end = Offset(x = width, y = height / 2),

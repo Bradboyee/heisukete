@@ -2,6 +2,7 @@ package com.thepparat.heisukete.feature_kanjialive.data.remote.dto
 
 data class KanjiDetailDto(
     val kanji: Kanji,
+    val radical: Radical,
     val examples: List<Example>,
     val references: Reference,
 ) {
@@ -13,6 +14,24 @@ data class KanjiDetailDto(
         val kunyomi: Kunyomi,
     )
 
+    data class Radical(
+        val character: String,
+        val strokes: Int,
+        val image: String,
+        val position: Position,
+        val name: Name,
+    )
+
+    data class Name(
+        val hiragana: String,
+        val romaji: String,
+    )
+
+    data class Position(
+        val hiragana: String,
+        val romaji: String,
+        val icon: String,
+    )
 
     data class Meaning(
         val english: String,

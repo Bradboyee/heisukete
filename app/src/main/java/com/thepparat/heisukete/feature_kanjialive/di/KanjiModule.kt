@@ -3,10 +3,10 @@ package com.thepparat.heisukete.feature_kanjialive.di
 import android.content.Context
 import androidx.room.Room
 import com.thepparat.heisukete.BuildConfig
-import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiDatabase
-import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiDetailDao
-import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiGradeDao
-import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiItemDao
+import com.thepparat.heisukete.core.database.KanjiDatabase
+import com.thepparat.heisukete.feature_kanjialive.data.dao.KanjiDetailDao
+import com.thepparat.heisukete.feature_kanjialive.data.dao.KanjiGradeDao
+import com.thepparat.heisukete.feature_kanjialive.data.dao.KanjiItemDao
 import com.thepparat.heisukete.feature_kanjialive.data.remote.KanjiAliveApi
 import dagger.Module
 import dagger.Provides
@@ -42,11 +42,6 @@ object KanjiModule {
             .create(KanjiAliveApi::class.java)
     }
 
-    @Provides
-    @Singleton
-    fun provideKanjiAliveDatabase(@ApplicationContext context: Context): KanjiDatabase {
-        return Room.databaseBuilder(context, KanjiDatabase::class.java, "kanji_database").build()
-    }
 
     @Provides
     @Singleton

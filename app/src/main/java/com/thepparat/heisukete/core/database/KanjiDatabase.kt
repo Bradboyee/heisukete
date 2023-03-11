@@ -1,8 +1,11 @@
-package com.thepparat.heisukete.feature_kanjialive.data.database
+package com.thepparat.heisukete.core.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.thepparat.heisukete.feature_kanjialive.data.dao.KanjiDetailDao
+import com.thepparat.heisukete.feature_kanjialive.data.dao.KanjiGradeDao
+import com.thepparat.heisukete.feature_kanjialive.data.dao.KanjiItemDao
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.util.StringListConverter
 import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiByGrade
 import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiDetail

@@ -16,4 +16,12 @@ data class KanjiDetail(
     val katakana: String,
     val examples: List<String>?,
     val grade: Int,
+    val radical: String,
+    val radicalHiragana : String,
+    val radicalRomaji : String,
+    val radicalStroke: Int,
+    val radicalImage: String,
+    val position: String,
+    val positionRomaji: String,
+    val positionIcon: String,
 )

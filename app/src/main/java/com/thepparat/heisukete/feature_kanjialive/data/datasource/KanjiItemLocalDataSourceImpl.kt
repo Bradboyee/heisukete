@@ -1,6 +1,6 @@
 package com.thepparat.heisukete.feature_kanjialive.data.datasource
 
-import com.thepparat.heisukete.feature_kanjialive.data.database.KanjiItemDao
+import com.thepparat.heisukete.feature_kanjialive.data.dao.KanjiItemDao
 import com.thepparat.heisukete.feature_kanjialive.data.datasource.local.KanjiItemLocalDataSource
 import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiItem
 import javax.inject.Inject
