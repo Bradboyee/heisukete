@@ -1,4 +1,4 @@
-package com.thepparat.heisukete.core.navigationbar
+package com.thepparat.heisukete.core.bottombar
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

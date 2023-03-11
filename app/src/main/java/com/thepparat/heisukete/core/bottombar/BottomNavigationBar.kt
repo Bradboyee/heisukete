@@ -1,5 +1,6 @@
-package com.thepparat.heisukete.core.navigationbar
+package com.thepparat.heisukete.core.bottombar
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -7,27 +8,31 @@ import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.currentBackStackEntryAsState
 
 @Composable
 fun BottomNavigationBar(
     modifier: Modifier = Modifier,
-    items: List<NavItem>,
     navController: NavController,
     onItemClick: (NavItem) -> Unit,
 ) {
-    val backStackEntry = navController.currentBackStackEntryAsState()
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentDestination = navBackStackEntry?.destination
     BottomNavigation(modifier = modifier,
         backgroundColor = MaterialTheme.colors.primary,
         elevation = 5.dp) {
-        items.forEach { item ->
-            val selected = item.route == backStackEntry.value?.destination?.route
+        NAVIGATION_ITEMS.forEach { item ->
+            val selected = currentDestination?.hierarchy?.any {
+                it.route == item.route
+            } == true
             BottomNavigationItem(
                 selected = selected,
                 onClick = { onItemClick(item) },

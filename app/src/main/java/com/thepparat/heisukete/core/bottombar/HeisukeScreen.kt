@@ -1,4 +1,4 @@
-package com.thepparat.heisukete.core.navigationbar
+package com.thepparat.heisukete.core.bottombar
 
 sealed class HeisukeScreen(val name: String, val route: String) {
     object SpacedScreen : HeisukeScreen("Spaced", "spaced_screen")

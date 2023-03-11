@@ -1,13 +1,19 @@
 package com.thepparat.heisukete.feature_kanjialive.presentation
 
 import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
-import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.CircularProgressIndicator
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.material.pullrefresh.PullRefreshIndicator
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
@@ -22,7 +28,7 @@ import com.thepparat.heisukete.feature_kanjialive.presentation.util.SearchKanjiT
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-@OptIn(ExperimentalMaterialApi::class)
+@OptIn(ExperimentalMaterialApi::class, ExperimentalAnimationApi::class)
 @Composable
 fun GridKanjiScreen(
     grade: Int?,
@@ -67,22 +73,28 @@ fun GridKanjiScreen(
                 value = viewModel.searchQuery.value,
                 onChange = viewModel::onSearch
             )
-            LazyVerticalGrid(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp),
-                columns = GridCells.Adaptive(minSize = 64.dp),
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            AnimatedVisibility(
+                visible = state.kanji != null,
+                enter = fadeIn(),
+                exit = fadeOut(animationSpec = tween(500, delayMillis = 50)),
             ) {
-                state.kanji?.let {
-                    items(it) { kanji ->
-                        KanjiCardItem(character = kanji.character) { character ->
-                            onSelect(character)
+                LazyVerticalGrid(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp),
+                    columns = GridCells.Adaptive(minSize = 64.dp),
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)
+                ) {
+                    state.kanji?.let {
+                        items(it) { kanji ->
+                            KanjiCardItem(character = kanji.character) { character ->
+                                onSelect(character)
+                            }
                         }
                     }
-                }
-                item {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    item {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                 }
             }
         }

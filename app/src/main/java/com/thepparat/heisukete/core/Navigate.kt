@@ -8,7 +8,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.thepparat.heisukete.core.home.HomeScreen
-import com.thepparat.heisukete.core.navigationbar.HeisukeScreen
+import com.thepparat.heisukete.core.bottombar.HeisukeScreen
 import com.thepparat.heisukete.core.space.SpaceScreen
 import com.thepparat.heisukete.core.stat.StatScreen
 import com.thepparat.heisukete.feature_kanjialive.presentation.GridKanjiScreen

@@ -129,6 +129,7 @@ class GetKanjiRepositoryImpl @Inject constructor(
                         grade = grade)
                 if (findKanjiByCharacters.isEmpty()) {
                     emit(Resource.Error("There are no kanji for $query in this grade"))
+                    return@flow
                 }
                 emit(Resource.Success(data = findKanjiByCharacters))
             } catch (e: Exception) {
