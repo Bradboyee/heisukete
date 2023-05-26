@@ -23,10 +23,8 @@ class GetKanjiByGradeViewModel @Inject constructor(
     private val getByGradeUseCase: GetByGradeUseCase,
     private val searchUseCase: GetBySearchUseCase,
 ) : ViewModel() {
-
     var state = mutableStateOf(KanjiByGradeState())
         private set
-
     private val _searchQuery = mutableStateOf("")
     val searchQuery: State<String> = _searchQuery
     private var searchJob: Job? = null

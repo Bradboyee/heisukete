@@ -1,21 +1,29 @@
 package com.thepparat.heisukete.core
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.material.ScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.thepparat.heisukete.core.home.HomeScreen
 import com.thepparat.heisukete.core.bottombar.HeisukeScreen
+import com.thepparat.heisukete.core.home.HomeScreen
 import com.thepparat.heisukete.core.space.SpaceScreen
 import com.thepparat.heisukete.core.stat.StatScreen
+import com.thepparat.heisukete.core.topbar.TopBarViewModel
 import com.thepparat.heisukete.feature_kanjialive.presentation.GridKanjiScreen
 import com.thepparat.heisukete.feature_kanjialive.presentation.KanjiDetailScreen
 
+
 @Composable
-fun Navigate(navController: NavHostController, paddingValues: PaddingValues) {
+fun Navigate(
+    navController: NavHostController,
+    paddingValues: PaddingValues,
+    topBarViewModel: TopBarViewModel,
+    scaffoldState: ScaffoldState
+) {
     NavHost(navController = navController, startDestination = HeisukeScreen.HomeScreen.route) {
         //space route
         composable(route = HeisukeScreen.SpacedScreen.route) {
@@ -34,18 +42,28 @@ fun Navigate(navController: NavHostController, paddingValues: PaddingValues) {
         composable(route = HeisukeScreen.KanjiGrid.route + "/{grade}",
             arguments = listOf(navArgument(name = "grade") {
                 type = NavType.IntType
-            })) { backStackEntry ->
-            GridKanjiScreen(backStackEntry.arguments?.getInt("grade"),
-                paddingValues = paddingValues) { character ->
+            })
+        ) { backStackEntry ->
+            backStackEntry.destination.parent
+            GridKanjiScreen(
+                backStackEntry.arguments?.getInt("grade"),
+                paddingValues = paddingValues
+            ) { character ->
                 navController.navigate(HeisukeScreen.KanjiDetail.route + "/$character")
             }
         }
         composable(route = HeisukeScreen.KanjiDetail.route + "/{character}",
             arguments = listOf(navArgument(name = "character") {
                 type = NavType.StringType
-            })) { backStackEntry ->
-            KanjiDetailScreen(backStackEntry.arguments?.getString("character"),
-                paddingValues = paddingValues)
+            })
+        ) { backStackEntry ->
+            KanjiDetailScreen(
+                backStackEntry.arguments?.getString("character"),
+                paddingValues = paddingValues,
+                topBarViewModel = topBarViewModel,
+                scaffoldState = scaffoldState
+            )
         }
     }
 }
+

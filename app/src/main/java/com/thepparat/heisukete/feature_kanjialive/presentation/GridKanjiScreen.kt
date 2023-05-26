@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.Navigation
 import com.thepparat.heisukete.feature_kanjialive.presentation.util.SearchKanjiTextField
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch

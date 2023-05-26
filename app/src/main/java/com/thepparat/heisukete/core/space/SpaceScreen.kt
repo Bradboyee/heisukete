@@ -6,10 +6,14 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import com.thepparat.heisukete.space_repeat_feature.data.entity.domain.KanjiQuizItem
+import com.thepparat.heisukete.space_repeat_feature.data.entity.presentation.SpacedViewModel
 
 @Composable
-fun SpaceScreen() {
+fun SpaceScreen(viewModel: SpacedViewModel = hiltViewModel()) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         Text(text = "SpaceScreen")
+        viewModel.fetchQuizItem();
     }
 }

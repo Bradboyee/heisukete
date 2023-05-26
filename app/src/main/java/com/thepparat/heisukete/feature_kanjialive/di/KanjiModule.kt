@@ -1,17 +1,15 @@
 package com.thepparat.heisukete.feature_kanjialive.di
 
-import android.content.Context
-import androidx.room.Room
 import com.thepparat.heisukete.BuildConfig
 import com.thepparat.heisukete.core.database.KanjiDatabase
 import com.thepparat.heisukete.feature_kanjialive.data.dao.KanjiDetailDao
 import com.thepparat.heisukete.feature_kanjialive.data.dao.KanjiGradeDao
 import com.thepparat.heisukete.feature_kanjialive.data.dao.KanjiItemDao
 import com.thepparat.heisukete.feature_kanjialive.data.remote.KanjiAliveApi
+import com.thepparat.heisukete.space_repeat_feature.data.entity.data.local.KanjiQuizItemDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
-import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
@@ -59,5 +57,11 @@ object KanjiModule {
     @Singleton
     fun provideKanjiItemDao(db: KanjiDatabase): KanjiItemDao {
         return db.kanjiItemDao()
+    }
+
+    @Provides
+    @Singleton
+    fun providesKanjiQuizItemDao(db: KanjiDatabase): KanjiQuizItemDao {
+        return db.kanjiQuizItemDao()
     }
 }

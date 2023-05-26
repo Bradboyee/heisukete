@@ -1,12 +1,17 @@
 package com.thepparat.heisukete.feature_kanjialive.presentation
 
+import android.util.Log
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.thepparat.heisukete.R
 import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiDetail
 import com.thepparat.heisukete.feature_kanjialive.domain.usecase.GetByGradeUseCase
 import com.thepparat.heisukete.feature_kanjialive.domain.usecase.GetKanjiDetailUseCase
 import com.thepparat.heisukete.feature_kanjialive.domain.util.Resource
+import com.thepparat.heisukete.space_repeat_feature.data.entity.domain.KanjiQuizItem
+import com.thepparat.heisukete.space_repeat_feature.data.entity.domain.usecase.UpsertKanjiQuizItemUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
@@ -17,32 +22,36 @@ import javax.inject.Inject
 @HiltViewModel
 class KanjiDetailViewModel @Inject constructor(
     private val getKanjiDetailUseCase: GetKanjiDetailUseCase,
-    private val getByGradeUseCase: GetByGradeUseCase
-    ) :
+    private val getByGradeUseCase: GetByGradeUseCase,
+    private val upsertKanjiQuizItemUseCase: UpsertKanjiQuizItemUseCase
+) :
     ViewModel() {
 
-    var state = mutableStateOf(KanjiDetailState(loading = true))
-        private set
+    private var _state = mutableStateOf(KanjiDetailState(loading = true))
+    val state: State<KanjiDetailState> = _state
+
 
     fun getKanjiDetail(kanji: String) {
         viewModelScope.launch(Dispatchers.IO) {
             getKanjiDetailUseCase.invoke(kanji).onEach { result ->
                 when (result) {
                     is Resource.Loading -> {
-                        state.value = state.value.copy(
+                        _state.value = _state.value.copy(
                             loading = true
                         )
                     }
+
                     is Resource.Error -> {
-                        state.value = state.value.copy(
+                        _state.value = _state.value.copy(
                             error = result.message,
                             loading = false
                         )
                     }
+
                     is Resource.Success -> {
-                        state.value = state.value.copy(
+                        _state.value = _state.value.copy(
                             detail = result.data,
-                            loading = false
+                            loading = false,
                         )
                     }
                 }
