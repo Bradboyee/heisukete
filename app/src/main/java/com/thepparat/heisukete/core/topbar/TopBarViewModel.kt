@@ -36,16 +36,30 @@ class TopBarViewModel @Inject constructor(
     val uiEventFlow = _uiEventFlow.asSharedFlow()
 
     private var _isSelect = mutableStateOf(false)
+
     private var kanjiQuizItem: KanjiQuizItem? = null
+
+    private var _openDialog = mutableStateOf(false)
+    val openDialog: State<Boolean> = _openDialog
+
+    fun dismissDialog() {
+        _openDialog.value = false
+    }
+
+    private fun openDialog() {
+        _openDialog.value = true
+    }
 
     fun onEvent(event: FavouriteEvent) {
         when (event) {
             FavouriteEvent.OnFavouriteClick -> {
                 onClickFavIcon()
             }
+
             is FavouriteEvent.SetKanjiQuizItem -> {
                 this.kanjiQuizItem = event.kanjiQuizItem
             }
+
             is FavouriteEvent.CheckKanjiIsSelected -> {
                 checkIsSelected(character = event.character)
             }
@@ -54,9 +68,10 @@ class TopBarViewModel @Inject constructor(
 
     private fun onClickFavIcon() {
         val prefix = "onClickFavIcon : "
+        Log.d(TAG,"onClickFavIcon execute")
         viewModelScope.launch(Dispatchers.IO) {
             val kanjiQuizItem = kanjiQuizItem
-                ?: return@launch;_uiEventFlow.emit(TopBarEvent.ShowMessage(message = "failed.")) // Store kanjiQuizItem in a local variable
+                ?: return@launch// Store kanjiQuizItem in a local variable
             Log.d(TAG, prefix + "kanjiQuizItem")
             Log.d(TAG, prefix + "click")
             _isSelect.value = !_isSelect.value
@@ -64,18 +79,17 @@ class TopBarViewModel @Inject constructor(
                 Log.d(TAG, prefix + "selected")
                 insert(kanjiQuizItem)
                 _uiEventFlow.emit(TopBarEvent.ShowMessage(message = "add success."))
+                changeIconByState()
             } else {
                 Log.d(TAG, prefix + "not selected")
-                delete(kanjiQuizItem)
-                _uiEventFlow.emit(TopBarEvent.ShowMessage(message = "delete success."))
+                openDialog()
             }
-            // Move the checkIsSelected call here
-            changeIconByState()
         }
     }
 
-    fun checkIsSelected(character: String) {
+    private fun checkIsSelected(character: String) {
         val prefix = "checkIsSelected "
+        Log.d(TAG,"checkIsSelected execute")
         viewModelScope.launch(Dispatchers.IO) {
             getKanjiQuizItemByCharacterUseCase.invoke(character).onEach { result ->
                 when (result) {
@@ -129,9 +143,11 @@ class TopBarViewModel @Inject constructor(
         }
     }
 
-    private fun delete(kanjiQuizItem: KanjiQuizItem) {
+     fun delete() {
         val prefix = "delete : "
         viewModelScope.launch(Dispatchers.IO) {
+            val kanjiQuizItem = kanjiQuizItem
+                ?: return@launch// Store kanjiQuizItem in a local variable
             deleteKanjiQuizItemUseCase.invoke(kanjiQuizItem).onEach { result ->
                 when (result) {
                     is Resource.Error -> {
@@ -145,6 +161,7 @@ class TopBarViewModel @Inject constructor(
                     is Resource.Success -> {
                         Log.d(TAG, prefix + "Success")
                         _isSelect.value = false
+                        _uiEventFlow.emit(TopBarEvent.ShowMessage(message = "delete success."))
                     }
                 }
             }.launchIn(this)

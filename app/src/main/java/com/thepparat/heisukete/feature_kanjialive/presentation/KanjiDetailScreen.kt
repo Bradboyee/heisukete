@@ -67,6 +67,7 @@ fun KanjiDetailScreen(
     var boxWidth by remember { mutableStateOf(Size.Zero) }
     val state = viewModel.state.value
     val detail = state.detail
+    val openDialog = topBarViewModel.openDialog
     LaunchedEffect(key1 = true) {
         kanji?.let { viewModel.getKanjiDetail(kanji = it) }
         topBarViewModel.uiEventFlow.collectLatest { event ->
@@ -94,6 +95,9 @@ fun KanjiDetailScreen(
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
         detail?.let { kanji ->
+            if (openDialog.value) {
+                FavouriteDialog(viewModel = topBarViewModel)
+            }
             val kanjiQuizItem = KanjiQuizItem(
                 character = kanji.character,
                 grade = kanji.grade,

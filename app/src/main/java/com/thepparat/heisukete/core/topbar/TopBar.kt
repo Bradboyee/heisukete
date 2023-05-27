@@ -23,7 +23,7 @@ import com.thepparat.heisukete.core.bottombar.HeisukeScreen
 fun TopBar(navController: NavController, viewModel: TopBarViewModel) {
     val painter = painterResource(viewModel.isFavouriteIconState.value)
     val backStackEntry = navController.currentBackStackEntryAsState()
-    TopAppBar {
+    TopAppBar(elevation = 4.dp) {
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
