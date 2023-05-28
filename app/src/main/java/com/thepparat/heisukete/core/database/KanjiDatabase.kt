@@ -12,16 +12,17 @@ import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiDetail
 import com.thepparat.heisukete.feature_kanjialive.domain.model.KanjiItem
 import com.thepparat.heisukete.space_repeat_feature.data.entity.data.local.KanjiQuizItemDao
 import com.thepparat.heisukete.space_repeat_feature.data.entity.data.local.KanjiQuizItemEntity
+import com.thepparat.heisukete.space_repeat_feature.data.entity.data.local.converter.DateConverter
 
 @Database(
     version = 1,
     entities = [KanjiItem::class, KanjiDetail::class, KanjiByGrade::class, KanjiQuizItemEntity::class]
 )
-@TypeConverters(value = [StringListConverter::class])
+@TypeConverters(value = [StringListConverter::class, DateConverter::class])
 abstract class KanjiDatabase : RoomDatabase() {
     abstract fun kanjiGradeDao(): KanjiGradeDao
     abstract fun kanjiDetailDao(): KanjiDetailDao
     abstract fun kanjiItemDao(): KanjiItemDao
 
-    abstract fun kanjiQuizItemDao() : KanjiQuizItemDao
+    abstract fun kanjiQuizItemDao(): KanjiQuizItemDao
 }

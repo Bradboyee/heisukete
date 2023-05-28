@@ -10,11 +10,12 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import com.thepparat.heisukete.core.bottombar.HeisukeScreen
 import com.thepparat.heisukete.core.home.HomeScreen
-import com.thepparat.heisukete.core.space.SpaceScreen
 import com.thepparat.heisukete.core.stat.StatScreen
 import com.thepparat.heisukete.core.topbar.TopBarViewModel
 import com.thepparat.heisukete.feature_kanjialive.presentation.GridKanjiScreen
 import com.thepparat.heisukete.feature_kanjialive.presentation.KanjiDetailScreen
+import com.thepparat.heisukete.space_repeat_feature.data.entity.presentation.quiz.QuizScreen
+import com.thepparat.heisukete.space_repeat_feature.data.entity.presentation.spaced.SpaceScreen
 
 
 @Composable
@@ -27,7 +28,11 @@ fun Navigate(
     NavHost(navController = navController, startDestination = HeisukeScreen.HomeScreen.route) {
         //space route
         composable(route = HeisukeScreen.SpacedScreen.route) {
-            SpaceScreen()
+            SpaceScreen(paddingValues = paddingValues, onSelect = { character ->
+                navController.navigate(HeisukeScreen.KanjiDetail.route + "/$character")
+            }, onStartQuiz = {
+                navController.navigate(HeisukeScreen.QuizScreen.route)
+            })
         }
         //stat route
         composable(route = HeisukeScreen.StatScreen.route) {
@@ -39,7 +44,8 @@ fun Navigate(
                 navController.navigate(HeisukeScreen.KanjiGrid.route + "/$grade")
             }
         }
-        composable(route = HeisukeScreen.KanjiGrid.route + "/{grade}",
+        composable(
+            route = HeisukeScreen.KanjiGrid.route + "/{grade}",
             arguments = listOf(navArgument(name = "grade") {
                 type = NavType.IntType
             })
@@ -52,7 +58,8 @@ fun Navigate(
                 navController.navigate(HeisukeScreen.KanjiDetail.route + "/$character")
             }
         }
-        composable(route = HeisukeScreen.KanjiDetail.route + "/{character}",
+        composable(
+            route = HeisukeScreen.KanjiDetail.route + "/{character}",
             arguments = listOf(navArgument(name = "character") {
                 type = NavType.StringType
             })
@@ -63,6 +70,9 @@ fun Navigate(
                 topBarViewModel = topBarViewModel,
                 scaffoldState = scaffoldState
             )
+        }
+        composable(route = HeisukeScreen.QuizScreen.route) {
+            QuizScreen(paddingValues = paddingValues)
         }
     }
 }

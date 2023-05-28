@@ -54,6 +54,7 @@ import com.thepparat.heisukete.feature_kanjialive.presentation.util.TextDivider
 import com.thepparat.heisukete.feature_kanjialive.presentation.util.TextTopic
 import com.thepparat.heisukete.space_repeat_feature.data.entity.domain.KanjiQuizItem
 import kotlinx.coroutines.flow.collectLatest
+import java.util.Date
 
 @Composable
 fun KanjiDetailScreen(
@@ -101,7 +102,11 @@ fun KanjiDetailScreen(
             val kanjiQuizItem = KanjiQuizItem(
                 character = kanji.character,
                 grade = kanji.grade,
-                meaning = kanji.meaning
+                meaning = kanji.meaning,
+                create_dt = Date(),
+                update_dt = Date(),
+                repeat_level = 0,
+                do_date = Date()
             )
             //check TopBar Star status isSelected
             topBarViewModel.onEvent(FavouriteEvent.CheckKanjiIsSelected(character = kanji.character))
